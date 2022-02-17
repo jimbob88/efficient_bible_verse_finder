@@ -2,31 +2,34 @@
 #include <dirent.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 
-int main(int argc, char const *argv[])
+int main(int argc, char *const argv[])
 {
-    if (argc < 2)
+    int c;
+    int bible_parsed = 0;
+    char *bible_name;
+
+    while ((c = getopt(argc, argv, "b:")) != -1)
     {
-        printf("It seems like you passed no commands?\n");
-        return -1;
+        switch (c)
+        {
+        case 'b':
+            bible_parsed = 1;
+            bible_name = optarg;
+            break;
+        case '?':
+            printf("Unknown option: -%c\n", optopt);
+        }
+    };
+    if (!bible_parsed)
+    {
+        printf("ERROR: -b OPTION IS REQUIRED\n");
+        exit(1);
     }
     else
     {
-        // for (int i = 1; i < argc; ++i)
-        // {
-        //     printf("argv[%d]: %s\n", i, argv[i]);
-        // }
-        if (strcmp("-bible", argv[1]) == 0 && argc > 2)
-        {
-            printf("Selecting bible: %s\n", argv[2]);
-            // printf("typeof: %s", typeof(argv[2]));
-            // char bible_name[] = argv[2];
-        }
-        else
-        {
-            printf("No bible passed, choosing default bible: engwebp\n");
-            char bible_name[] = "engwebp";
-        };
-        return 0;
-    }
+        printf("%s\n", bible_name);
+    };
+    return 0;
 }
