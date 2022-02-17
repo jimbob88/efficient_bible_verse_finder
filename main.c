@@ -6,7 +6,7 @@ REQUIRES:
  - Bibles in the read_aloud format
 
 Example command:
-$ ./main -b engwebpb -B GEN -h
+$ ./main -b engwebpb -B PSA -V 112
 */
 #include <stdio.h>
 #include <dirent.h>
