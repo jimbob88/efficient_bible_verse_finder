@@ -41,21 +41,21 @@ globber(char *glob_text, char *bible_name, char *book_name, int verse_num)
     glob_t gstruct;
     int r;
     char buff[1024];
-    printf("%s", glob_text);
+    // printf("%s", glob_text);
     snprintf(buff, sizeof(buff), glob_text, bible_name, bible_name, book_name, verse_num);
-    printf("\n%s\n", buff);
+    // printf("\n%s\n", buff);
     r = glob(buff, GLOB_ERR, NULL, &gstruct);
     if (r != 0)
     {
         if (r == GLOB_NOMATCH)
         {
-            fprintf(stderr, "No matches\n");
+            fprintf(stderr, "\033[0;33mNo matches\033[0m\n");
             result.r = 2;
             return result;
         }
         else
         {
-            fprintf(stderr, "Some kinda glob error\n");
+            fprintf(stderr, "\033[0;33mSome kinda glob error\033[0m\n\n");
             result.r = 2;
             return result;
         }
@@ -132,7 +132,7 @@ int main(int argc, char *const argv[])
     {
         if (compareArrays(buffer, bible_name, sizeof bible_name))
         {
-            printf("Bible exists\n");
+            printf("\033[0;32mBible exists\033[0m\n");
             bible_exists = 1;
             break;
         }
@@ -141,7 +141,7 @@ int main(int argc, char *const argv[])
 
     if (!bible_exists)
     {
-        printf("ERROR: Bible does not exist\n");
+        printf("\033[0;31mERROR: Bible does not exist\033[0m\n");
         exit(1);
     }
 
