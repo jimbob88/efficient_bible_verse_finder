@@ -100,19 +100,19 @@ int main(int argc, char *const argv[])
     };
     if (!bible_parsed)
     {
-        printf("ERROR: -b OPTION IS REQUIRED\n");
+        printf("\033[0;31mERROR: -b OPTION IS REQUIRED\033[0m\n");
         exit(1);
     };
 
     if (!book_parsed)
     {
-        printf("ERROR: -B OPTION IS REQUIRED\n");
+        printf("\033[0;31mERROR: -B OPTION IS REQUIRED\033[0m\n");
         exit(1);
     }
 
     if (!verse_parsed)
     {
-        printf("ERROR: -V OPTION IS REQUIRED\n");
+        printf("\033[0;31mERROR: -V OPTION IS REQUIRED\033[0m\n");
         exit(1);
     }
 
@@ -158,7 +158,7 @@ int main(int argc, char *const argv[])
     }
     else
     {
-        printf("ERROR: NOT FOUND?");
+        printf("Testing integers with 3 sig figs\n");
         glob_result = globber("./bibles/%s/%s_*_%s_%.3d_read.txt", bible_name, book_name, verse_num);
         if (glob_result.r == 0)
         {
