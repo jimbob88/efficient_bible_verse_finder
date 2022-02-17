@@ -55,7 +55,7 @@ globber(char *glob_text, char *bible_name, char *book_name, int verse_num)
         }
         else
         {
-            fprintf(stderr, "\033[0;33mSome kinda glob error\033[0m\n\n");
+            fprintf(stderr, "\033[0;33mUnknown glob error\033[0m\n");
             result.r = 2;
             return result;
         }
@@ -63,6 +63,21 @@ globber(char *glob_text, char *bible_name, char *book_name, int verse_num)
     result.r = 0;
     result.found = gstruct.gl_pathv;
     return result;
+}
+
+void print_file(FILE *filePointer, char *text_file)
+{
+    int bufferLength = 2000;
+    char buffer[bufferLength];
+
+    filePointer = fopen(text_file, "r");
+
+    // Reading verse text
+    while (fgets(buffer, bufferLength, filePointer))
+    {
+        printf("%s\n", buffer);
+    }
+    fclose(filePointer);
 }
 
 int main(int argc, char *const argv[])
@@ -126,6 +141,12 @@ int main(int argc, char *const argv[])
 
     filePointer = fopen("bibles.txt", "r");
 
+    if (filePointer == NULL)
+    {
+        printf("\033[0;31mERROR: bibles.txt does not exist\033[0m\n");
+        exit(1);
+    }
+
     // check bible exists in bibles.txt
     int bible_exists = 0;
     while (fgets(buffer, bufferLength, filePointer))
@@ -146,50 +167,42 @@ int main(int argc, char *const argv[])
     }
 
     struct fnd glob_result;
+    // Test with 2 decimal places
     glob_result = globber("./bibles/%s/%s_*_%s_%.2d_read.txt", bible_name, book_name, verse_num);
+
+    char *text_file;
 
     if (glob_result.r == 0)
     {
         while (*glob_result.found)
         {
-            printf("%s\n", *glob_result.found);
+            text_file = *glob_result.found;
+            printf("%s\n", text_file);
             glob_result.found++;
         }
     }
     else
     {
+        // Test with 3 decimal places because PSA uses 3 decimal places
         printf("Testing integers with 3 sig figs\n");
         glob_result = globber("./bibles/%s/%s_*_%s_%.3d_read.txt", bible_name, book_name, verse_num);
         if (glob_result.r == 0)
         {
             while (*glob_result.found)
             {
-                printf("%s\n", *glob_result.found);
+                text_file = *glob_result.found;
+                printf("%s\n", text_file);
                 glob_result.found++;
             }
         }
+        else
+        {
+            printf("\033[0;31m%s: No verse found in %s at verse %d\n\033[0m", bible_name, book_name, verse_num);
+            exit(1);
+        }
     }
 
-    // char **found;
-    // glob_t gstruct;
-    // int r;
-    // char buff[1024];
-    // snprintf(buff, sizeof(buff), "./bibles/%s/%s_*_%s*.txt", bible_name, bible_name, book_name);
-    // printf("%s\n", buff);
-    // r = glob(buff, GLOB_ERR, NULL, &gstruct);
-    // if (r != 0)
-    // {
-    //     if (r == GLOB_NOMATCH)
-    //         fprintf(stderr, "No matches with initial test\n");
-    //     else
-    //         fprintf(stderr, "Some kinda glob error\n");
-    //     exit(1);
-    // }
-    // found = gstruct.gl_pathv;
-    // while (*found)
-    // {
-    //     printf("%s\n", *found);
-    //     found++;
-    // }
+    print_file(filePointer, text_file);
+
     return 0;
 }

@@ -2,3 +2,4 @@ main
 bibles/
 .vscode/
 bibles.txt
+massif.out*
