@@ -27,6 +27,43 @@ int compareArrays(char a[], char b[], long unsigned int n)
     return 1;
 }
 
+struct fnd
+{
+    int r;
+    char **found;
+};
+
+struct fnd
+globber(char *glob_text, char *bible_name, char *book_name)
+{
+    struct fnd result;
+    char **found;
+    glob_t gstruct;
+    int r;
+    char buff[1024];
+    snprintf(buff, sizeof(buff), glob_text, bible_name, bible_name, book_name);
+    printf("%s\n", buff);
+    r = glob(buff, GLOB_ERR, NULL, &gstruct);
+    if (r != 0)
+    {
+        if (r == GLOB_NOMATCH)
+        {
+            fprintf(stderr, "No matches\n");
+            result.r = 2;
+            return result;
+        }
+        else
+        {
+            fprintf(stderr, "Some kinda glob error\n");
+            result.r = 2;
+            return result;
+        }
+    }
+    result.r = 0;
+    result.found = gstruct.gl_pathv;
+    return result;
+}
+
 int main(int argc, char *const argv[])
 {
     int c;
@@ -95,27 +132,42 @@ int main(int argc, char *const argv[])
         exit(1);
     }
 
-    char **found;
-    glob_t gstruct;
-    int r;
-    char buff[1024];
-    snprintf(buff, sizeof(buff), "./bibles/%s/%s_*_%s*.txt", bible_name, bible_name, book_name);
-    printf("%s\n", buff);
-    r = glob(buff, GLOB_ERR, NULL, &gstruct);
-    if (r != 0)
+    struct fnd glob_result1;
+    glob_result1 = globber("./bibles/%s/%s_*_%s*.txt", bible_name, book_name);
+
+    if (glob_result1.r == 0)
     {
-        if (r == GLOB_NOMATCH)
-            fprintf(stderr, "No matches\n");
-        else
-            fprintf(stderr, "Some kinda glob error\n");
-        exit(1);
+        while (*glob_result1.found)
+        {
+            printf("%s\n", *glob_result1.found);
+            glob_result1.found++;
+        }
     }
-    found = gstruct.gl_pathv;
-    while (*found)
+    else
     {
-        printf("%s\n", *found);
-        // printf("%s\n", *found);
-        found++;
+        printf("ERROR: NOT FOUND?");
     }
+
+    // char **found;
+    // glob_t gstruct;
+    // int r;
+    // char buff[1024];
+    // snprintf(buff, sizeof(buff), "./bibles/%s/%s_*_%s*.txt", bible_name, bible_name, book_name);
+    // printf("%s\n", buff);
+    // r = glob(buff, GLOB_ERR, NULL, &gstruct);
+    // if (r != 0)
+    // {
+    //     if (r == GLOB_NOMATCH)
+    //         fprintf(stderr, "No matches with initial test\n");
+    //     else
+    //         fprintf(stderr, "Some kinda glob error\n");
+    //     exit(1);
+    // }
+    // found = gstruct.gl_pathv;
+    // while (*found)
+    // {
+    //     printf("%s\n", *found);
+    //     found++;
+    // }
     return 0;
 }
