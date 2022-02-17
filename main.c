@@ -34,15 +34,16 @@ struct fnd
 };
 
 struct fnd
-globber(char *glob_text, char *bible_name, char *book_name)
+globber(char *glob_text, char *bible_name, char *book_name, int verse_num)
 {
     struct fnd result;
     char **found;
     glob_t gstruct;
     int r;
     char buff[1024];
-    snprintf(buff, sizeof(buff), glob_text, bible_name, bible_name, book_name);
-    printf("%s\n", buff);
+    printf("%s", glob_text);
+    snprintf(buff, sizeof(buff), glob_text, bible_name, bible_name, book_name, verse_num);
+    printf("\n%s\n", buff);
     r = glob(buff, GLOB_ERR, NULL, &gstruct);
     if (r != 0)
     {
@@ -69,15 +70,17 @@ int main(int argc, char *const argv[])
     int c;
     int bible_parsed = 0;
     int book_parsed = 0;
+    int verse_parsed = 0;
     char *bible_name;
     char *book_name;
+    int verse_num;
 
-    while ((c = getopt(argc, argv, "hb:B:")) != -1)
+    while ((c = getopt(argc, argv, "hb:B:V:")) != -1)
     {
         switch (c)
         {
         case 'h':
-            printf("-b [bible_name]\n-B [book_name]\n");
+            printf("-b [bible_name]\n-B [book_name]\n-V [verse_number]\n");
             break;
         case 'b':
             bible_parsed = 1;
@@ -86,6 +89,10 @@ int main(int argc, char *const argv[])
         case 'B':
             book_parsed = 1;
             book_name = optarg;
+            break;
+        case 'V':
+            verse_parsed = 1;
+            verse_num = atoi(optarg);
             break;
         case '?':
             printf("Unknown option: -%c\n", optopt);
@@ -100,6 +107,12 @@ int main(int argc, char *const argv[])
     if (!book_parsed)
     {
         printf("ERROR: -B OPTION IS REQUIRED\n");
+        exit(1);
+    }
+
+    if (!verse_parsed)
+    {
+        printf("ERROR: -V OPTION IS REQUIRED\n");
         exit(1);
     }
 
@@ -132,20 +145,29 @@ int main(int argc, char *const argv[])
         exit(1);
     }
 
-    struct fnd glob_result1;
-    glob_result1 = globber("./bibles/%s/%s_*_%s*.txt", bible_name, book_name);
+    struct fnd glob_result;
+    glob_result = globber("./bibles/%s/%s_*_%s_%.2d_read.txt", bible_name, book_name, verse_num);
 
-    if (glob_result1.r == 0)
+    if (glob_result.r == 0)
     {
-        while (*glob_result1.found)
+        while (*glob_result.found)
         {
-            printf("%s\n", *glob_result1.found);
-            glob_result1.found++;
+            printf("%s\n", *glob_result.found);
+            glob_result.found++;
         }
     }
     else
     {
         printf("ERROR: NOT FOUND?");
+        glob_result = globber("./bibles/%s/%s_*_%s_%.3d_read.txt", bible_name, book_name, verse_num);
+        if (glob_result.r == 0)
+        {
+            while (*glob_result.found)
+            {
+                printf("%s\n", *glob_result.found);
+                glob_result.found++;
+            }
+        }
     }
 
     // char **found;
