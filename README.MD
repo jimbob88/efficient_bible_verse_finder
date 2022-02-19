@@ -33,7 +33,7 @@ engwebpb
 
 Python Usage:
 ```
-usage: main.py [-h] -b BIBLE -B BOOK -V VERSE [-t]
+usage: main.py [-h] -b BIBLE -B BOOK -n BOOK_NUMBER [-t]
 
 Read the bible!
 
@@ -42,14 +42,14 @@ optional arguments:
   -b BIBLE, --bible BIBLE
                         The bible to open
   -B BOOK, --book BOOK  The book to open
-  -V VERSE, --verse VERSE
-                        The verse to open
+  -n BOOK_NUMBER, --book-number BOOK_NUMBER
+                        The book number to open
   -t, --use-txt
 ```
 
 C Usage:
 ```
-usage: ./main [-h] -b BIBLE -B BOOK -V VERSE 
+usage: ./main [-h] -b BIBLE -B BOOK -n BOOK_NUMBER
 
 Read the bible!
 
@@ -58,22 +58,22 @@ optional arguments:
   -b BIBLE, --bible BIBLE
                         The bible to open
   -B BOOK, --book BOOK  The book to open
-  -V VERSE, --verse VERSE
-                        The verse to open
+  -n BOOK_NUMBER, --book-number BOOK_NUMBER
+                        The book number to open
 ```
 
 NOTICE: The `-t` option is exclusive to python because it only works in python (currently). 
 
 ## Performance
 ### C
-Command: `$ time ./main -b engwebpb -B PSA -V 112`
+Command: `$ time ./main -b engwebpb -B PSA -n 112`
 ```
 real    0m0.003s
 user    0m0.001s
 sys     0m0.000s
 ```
 ### Python
-Command: `$ time python3 main.py -b engwebpb -B PSA -V 112 -t`
+Command: `$ time python3 main.py -b engwebpb -B PSA -n 112 -t`
 ```
 real    0m0.024s
 user    0m0.016s
