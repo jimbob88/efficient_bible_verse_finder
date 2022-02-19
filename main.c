@@ -85,17 +85,17 @@ int main(int argc, char *const argv[])
     int c;
     int bible_parsed = 0;
     int book_parsed = 0;
-    int verse_parsed = 0;
+    int num_parsed = 0;
     char *bible_name;
     char *book_name;
-    int verse_num;
+    int book_num;
 
-    while ((c = getopt(argc, argv, "hb:B:V:")) != -1)
+    while ((c = getopt(argc, argv, "hb:B:n:")) != -1)
     {
         switch (c)
         {
         case 'h':
-            printf("-b [bible_name]\n-B [book_name]\n-V [verse_number]\n");
+            printf("-b [bible_name]\n-B [book_name]\n-n [book_number]\n");
             break;
         case 'b':
             bible_parsed = 1;
@@ -105,9 +105,9 @@ int main(int argc, char *const argv[])
             book_parsed = 1;
             book_name = optarg;
             break;
-        case 'V':
-            verse_parsed = 1;
-            verse_num = atoi(optarg);
+        case 'n':
+            num_parsed = 1;
+            book_num = atoi(optarg);
             break;
         case '?':
             printf("Unknown option: -%c\n", optopt);
@@ -125,9 +125,9 @@ int main(int argc, char *const argv[])
         exit(1);
     }
 
-    if (!verse_parsed)
+    if (!num_parsed)
     {
-        printf("\033[0;31mERROR: -V OPTION IS REQUIRED\033[0m\n");
+        printf("\033[0;31mERROR: -n OPTION IS REQUIRED\033[0m\n");
         exit(1);
     }
 
@@ -168,7 +168,7 @@ int main(int argc, char *const argv[])
 
     struct fnd glob_result;
     // Test with 2 decimal places
-    glob_result = globber("./bibles/%s/%s_*_%s_%.2d_read.txt", bible_name, book_name, verse_num);
+    glob_result = globber("./bibles/%s/%s_*_%s_%.2d_read.txt", bible_name, book_name, book_num);
 
     char *text_file;
 
@@ -185,7 +185,7 @@ int main(int argc, char *const argv[])
     {
         // Test with 3 decimal places because PSA uses 3 decimal places
         printf("Testing integers with 3 sig figs\n");
-        glob_result = globber("./bibles/%s/%s_*_%s_%.3d_read.txt", bible_name, book_name, verse_num);
+        glob_result = globber("./bibles/%s/%s_*_%s_%.3d_read.txt", bible_name, book_name, book_num);
         if (glob_result.r == 0)
         {
             while (*glob_result.found)
@@ -197,7 +197,7 @@ int main(int argc, char *const argv[])
         }
         else
         {
-            printf("\033[0;31m%s: No verse found in %s at verse %d\n\033[0m", bible_name, book_name, verse_num);
+            printf("\033[0;31m%s: No verse found in %s at verse %d\n\033[0m", bible_name, book_name, book_num);
             exit(1);
         }
     }

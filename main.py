@@ -21,13 +21,13 @@ if __name__ == "__main__":
         help="The book to open",
     )
     parser.add_argument(
-        "-V",
-        "--verse",
+        "-n",
+        "--book-number",
         type=int,
         required=True,
         action="store",
         default=None,
-        help="The verse to open",
+        help="The book number to open",
     )
     parser.add_argument("-t", "--use-txt", required=False, action="store_true")
 
@@ -50,16 +50,16 @@ if __name__ == "__main__":
         raise ValueError(f"{args.bible}: Bible not found")
 
     glob_result = glob.glob(
-        f"./bibles/{args.bible}/{args.bible}_*_{args.book}_{args.verse:02}_read.txt"
+        f"./bibles/{args.bible}/{args.bible}_*_{args.book}_{args.book_number:02}_read.txt"
     )
     if len(glob_result) < 1:
         glob_result = glob.glob(
-            f"./bibles/{args.bible}/{args.bible}_*_{args.book}_{args.verse:03}_read.txt"
+            f"./bibles/{args.bible}/{args.bible}_*_{args.book}_{args.book_number:03}_read.txt"
         )
 
     if len(glob_result) < 1:
         raise ValueError(
-            f"{args.bible}: No verse found in {args.book} at verse {args.verse}"
+            f"{args.bible}: No verse found in {args.book} at book no. {args.book_number}"
         )
 
     with open(glob_result[0], "r") as f:
